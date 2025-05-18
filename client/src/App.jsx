@@ -1,11 +1,17 @@
 import {useState, useEffect} from "react";
+import Button from '@mui/material/Button';
+import AppBar from "./component/appbar.js";
+import TransactionForm from "./component/TransactionForm.js";
+import './index.css';
 
 function App() {
-  const [form, setForm] = useState({
+  const InitialForm = {
     amount: "",
     description: "",
     date: "",
-  });
+  };
+
+  const [form, setForm] = useState(InitialForm);
 
   const [transactions, setTransactions] = useState([]);
 
@@ -23,46 +29,25 @@ function App() {
       console.error("Error fetching transactions");
     }
   }
-
-  const handleInput = (event) => {
-    const { name, value } = event.target;
-    setForm({
-      ...form,
-      [name]: value,
-    });
-  }
-
-  async function handleSubmit(event) {
-    event.preventDefault();
-    const response = await fetch("http://localhost:4000/transactions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
+  
+  async function handleDelete(id) {
+    const response = await fetch(`http://localhost:4000/transactions/${id}`, {
+      method: "DELETE",
     });
 
     if (response.ok) {
-      console.log("Transaction submitted successfully");
+      console.log("Transaction deleted successfully");
+      fetchTransactions();
     } else {
-      console.error("Error submitting transaction");
+      console.error("Error deleting transaction");
     }
-    setForm({
-      amount: "",
-      description: "",
-      date: "",
-    });
-    fetchTransactions();
   }
 
   return (
     <div className="App">
-      <form onSubmit={handleSubmit}>
-        <input type="number" name="amount" onChange={handleInput} placeholder="Enter transaction amount" />
-        <input type="text" name="description" onChange={handleInput} placeholder="Enter transaction description" />
-        <input type="date" name="date" onChange={handleInput} />
-        <button type="submit">Submit</button>
-      </form>
+      <AppBar />
+
+      <TransactionForm />
 
       <br />
 
@@ -79,6 +64,9 @@ function App() {
                 <td>{transaction.amount}</td>
                 <td>{transaction.description}</td>
                 <td>{new Date(transaction.date).toLocaleDateString()}</td>
+                <td>
+                  <button onClick={() => handleDelete(transaction._id)}>Delete</button>
+                </td>
               </tr>
             ))}
           </tbody>
