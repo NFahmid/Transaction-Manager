@@ -7,13 +7,16 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 
+
+const todaysDate = new Date().toISOString().split("T")[0];
+
 const InitialForm = {
     amount: "",
     description: "",
-    date: "",
+    date: todaysDate,
   };
 
-export default function TransactionForm() {
+export default function TransactionForm({ fetchTransactions}) {
   const [form, setForm] = React.useState(InitialForm);
   const [transactions, setTransactions] = React.useState([]); 
 
@@ -50,12 +53,12 @@ export default function TransactionForm() {
         });
 
         if (response.ok) {
-            console.log("Transaction submitted successfully");
+            console.log("Transaction created successfully");
+            fetchTransactions();
+            setForm(InitialForm);
         } else {
-            console.error("Error submitting transaction");
+            console.error("Error creating transaction");
         }
-        setForm(InitialForm);
-        fetchTransactions();
     }
 
     async function handleDelete(id) {
@@ -116,9 +119,9 @@ export default function TransactionForm() {
     }
 
   return (
-    <Card sx={{ minWidth: 275 , marginTop: 10}}>
+    <Card sx={{ minWidth: 275 , marginTop: 10, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <CardContent>
-        <Typography variant="h6" style={{ alignContent: 'center', marginBottom: 20, alignItems: 'center' }}>
+        <Typography variant="h6" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           Add new transaction
         </Typography>
           <form>
@@ -140,13 +143,14 @@ export default function TransactionForm() {
             />
             <TextField
               type="date"
-              label=""
+              label="Date"
               name="date"
               value={form.date}
               onChange={handleInput}
               variant="outlined"
               style={{ marginLeft: 5, marginRight: 5, marginBottom: 5 }}
             />
+            
             <Button variant="contained" color="primary" onClick={handleSubmit} style={{ marginTop: 10 }}>
               Submit
             </Button>

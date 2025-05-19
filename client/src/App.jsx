@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import AppBar from "./component/appbar.js";
 import TransactionForm from "./component/TransactionForm.js";
 import './index.css';
+import Table from "./component/Table.js";
 
 function App() {
   const InitialForm = {
@@ -47,31 +48,11 @@ function App() {
     <div className="App">
       <AppBar />
 
-      <TransactionForm />
+      <TransactionForm fetchTransactions={fetchTransactions} />
 
       <br />
 
-      <section>
-        <table>
-          <thead>
-            <th>Amount</th>
-          <th>Description</th>
-          <th>Date</th>
-          </thead>
-          <tbody>
-            {transactions.map((transaction) => (
-              <tr key={transaction._id}>
-                <td>{transaction.amount}</td>
-                <td>{transaction.description}</td>
-                <td>{new Date(transaction.date).toLocaleDateString()}</td>
-                <td>
-                  <button onClick={() => handleDelete(transaction._id)}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+      <Table transactions={transactions} onDelete={handleDelete} />
     </div>
 
     
